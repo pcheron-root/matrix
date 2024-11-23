@@ -1,1 +1,29 @@
-/target
+# Compilés générés par Cargo
+/target/
+
+# Logs et fichiers temporaires
+**/*.log
+**/*.tmp
+
+# Fichiers générés par l'éditeur ou l'environnement de développement
+.idea/        # IntelliJ IDEA ou CLion
+.vscode/      # Visual Studio Code
+.DS_Store     # macOS
+Thumbs.db     # Windows
+*.swp         # Vim
+*.swo         # Vim
+*.bak         # Fichiers de sauvegarde
+*.iml         # IntelliJ IDEA module files
+
+# Dépendances externes si elles sont vendangées manuellement (rare)
+vendor/
+
+# Fichiers de build pour des plateformes spécifiques
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Fichiers de tests ou caches temporaires
+/tests/output/
+
