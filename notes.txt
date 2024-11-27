@@ -1,0 +1,22 @@
+
+----------------------------------------------------------------------
+Les traits
+----------------------------------------------------------------------
+
+En rust, un trait est un mécanisme de polymorphisme qui permet de définir des comportements communs
+entre différents types. 
+Un trait spécifie un ensemble de méthodes qu'un type peut implémenter.
+
+Le trait ca a le meme objectif que les interfaces en Java ou des templates en C++
+
+ex :
+Je veux que ma structure 
+
+impl<K, const M: usize, const N: usize> Matrix<K, M, N>
+where
+    K: Debug,	// le type K doit implementer le trait Debug,
+				// ce qui lui permet d'utiliser "{:?}" dans le code
+				// du coup on accepte pas les types K qui n'implementent pas Debug
+				// dans les fonctions qui suivent cette implementation
+
+
