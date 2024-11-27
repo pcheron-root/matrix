@@ -63,3 +63,30 @@ fn test_scl_vector() {
     assert_eq!(v2.data[1], 1.0);
     assert_eq!(v2.data[2], 2.24);
 }
+
+// -----------------------------------------------------------------
+// linear combination
+// -----------------------------------------------------------------
+
+use matrix::structures::vector;
+
+#[test]
+fn test_linear_comb_matrix() {
+    let v1 = Vector::new([5.0, 2.0, 13.0]);
+    let v2 = Vector::new([1.0, 4.0, 3.0]);
+    let v3 = Vector::new([6.0, 10.0, 2.0]);
+
+    let x1 = 0.5;
+    let x2 = 0.2;
+    let x3 = 0.8;
+
+    let v4 = vector::linear_combination(&[v1, v2, v3], &[x1, x2, x3]);
+    assert_eq!(v4.data[0], 7.500000000000001);
+    assert_eq!(v4.data[1], 9.8);
+    assert_eq!(v4.data[2], 8.7);
+    assert!((v4.data[0] - 7.5f32).abs() < 1e-6);
+}
+
+// -----------------------------------------------------------------
+// linear interpolation
+// -----------------------------------------------------------------
