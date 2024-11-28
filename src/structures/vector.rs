@@ -190,3 +190,20 @@ where
         f.debug_struct("Vector").field("data", &self.data).finish()
     }
 }
+
+// -----------------------------------------------------------------
+// Dot product
+// -----------------------------------------------------------------
+
+impl<T, const N: usize> Vector<T, N>
+where
+    T: Copy + Add<Output = T> + Mul<Output = T>,
+{
+    pub fn dot(&self, v: &Self) -> T {
+        let mut result = self.data[0] * v.data[0];
+        for i in 1..N {
+            result = result + (self.data[i] * v.data[i]);
+        }
+        result
+    }
+}
