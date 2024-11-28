@@ -3,6 +3,7 @@ use std::fmt::Debug;
 use std::ops::{Add, Div, Mul, Sub};
 // use std::ops::AddAssign;
 
+#[derive(Clone, Debug)]
 pub struct Matrix<K, const M: usize, const N: usize> {
     pub data: [[K; N]; M],
 }
@@ -81,6 +82,23 @@ where
         }
     }
 }
+
+// -----------------------------------------------------------------
+// Clone
+// -----------------------------------------------------------------
+
+// impl<K, const M: usize, const N: usize> Clone for Matrix<K, M, N>
+// where
+//     K: Clone,
+// {
+//     fn clone(&self) -> Self {
+//         let mut result: [[K; N]; M] = ;
+//         for i in 0..M {
+//             result[i] = self.data[i].clone();
+//         }
+//         Matrix { data: result }
+//     }
+// }
 
 // -----------------------------------------------------------------
 // Operator overloading
@@ -167,5 +185,23 @@ where
             }
         }
         true
+    }
+}
+
+/// operator * beetween Matrix and number
+impl<K, const M: usize, const N: usize> Mul<K> for Matrix<K, M, N>
+where
+    K: Mul<Output = K> + Copy,
+{
+    type Output = Matrix<K, M, N>;
+
+    fn mul(self, scalar: K) -> Self::Output {
+        let mut result = self.data;
+        for i in 0..M {
+            for j in 0..N {
+                result[i][j] = self.data[i][j] * scalar;
+            }
+        }
+        Matrix { data: result }
     }
 }

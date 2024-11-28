@@ -1,3 +1,4 @@
+use std::fmt;
 use std::ops::MulAssign;
 use std::ops::{Add, Div, Mul, Sub};
 
@@ -27,7 +28,7 @@ impl<T: std::ops::AddAssign, const N: usize> Vector<T, N>
 where
     T: Copy,
 {
-    /// add will change the Vector
+    /// doc
     pub fn add(&mut self, v: &Vector<T, N>) {
         for i in 0..N {
             self.data[i] += v.data[i];
@@ -56,6 +57,7 @@ where
         }
     }
 }
+
 // -----------------------------------------------------------------
 // linear combination
 // -----------------------------------------------------------------
@@ -157,5 +159,34 @@ where
             }
         }
         true
+    }
+}
+
+/// operator * beetween Vector and number
+impl<T, const N: usize> Mul<T> for Vector<T, N>
+where
+    T: Mul<Output = T> + Copy,
+{
+    type Output = Vector<T, N>;
+
+    fn mul(self, scalar: T) -> Self::Output {
+        let mut result = self.data;
+        for i in 0..N {
+            result[i] = self.data[i] * scalar;
+        }
+        Vector { data: result }
+    }
+}
+
+// -----------------------------------------------------------------
+// Debug trait
+// -----------------------------------------------------------------
+
+impl<T, const N: usize> fmt::Debug for Vector<T, N>
+where
+    T: fmt::Debug,
+{
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("Vector").field("data", &self.data).finish()
     }
 }

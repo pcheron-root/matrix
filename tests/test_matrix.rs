@@ -29,6 +29,14 @@ fn test_is_square2_matrix() {
     assert_eq!(m.is_square(), false);
 }
 
+#[test]
+fn test_clone_matrix() {
+    let m = Matrix::new([[1, 2, 3], [4, 5, 6]]);
+
+    let new = m.clone();
+    assert_eq!(new, m);
+}
+
 // -----------------------------------------------------------------
 // add / substrack / scale
 // -----------------------------------------------------------------

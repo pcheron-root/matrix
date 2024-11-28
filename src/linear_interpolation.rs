@@ -1,18 +1,17 @@
-use std::ops::Mul;
-use std::ops::Sub;
+// use crate::structures::vector;
+use std::ops::{Add, Mul, Sub};
 
-pub fn lerp<
-    T: std::ops::Sub
-        + Clone
-        + std::ops::Add<<<T as std::ops::Sub>::Output as std::ops::Mul<K>>::Output, Output = T>,
-    K,
->(
-    x: T,
-    y: T,
-    c: K,
-) -> T
+pub fn lerp<T, K>(x: T, y: T, c: K) -> T
 where
-    <T as Sub>::Output: Mul<K>,
+    T: Add<Output = T> + Sub<Output = T> + Mul<K, Output = T> + Clone,
 {
     x.clone() + (y - x) * c
 }
+
+// pub fn new_lerp<T, K>(x: T, y: T, c: K) -> T
+// where
+//     T: Add<Output = T> + Sub<Output = T> + Mul<K, Output = T> + Clone,
+// {
+//     let diff = y - x;
+//     x.clone() + diff.scl(c)
+// }
