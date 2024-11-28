@@ -1,5 +1,6 @@
 // use super::vector::Vector;
 use std::fmt::Debug;
+use std::ops::{Add, Div, Mul, Sub};
 // use std::ops::AddAssign;
 
 pub struct Matrix<K, const M: usize, const N: usize> {
@@ -78,5 +79,93 @@ where
                 self.data[i][j] *= x;
             }
         }
+    }
+}
+
+// -----------------------------------------------------------------
+// Operator overloading
+// -----------------------------------------------------------------
+
+impl<K, const M: usize, const N: usize> Add for Matrix<K, M, N>
+where
+    K: Add<Output = K> + Copy,
+{
+    type Output = Matrix<K, M, N>;
+
+    fn add(self, other: Self) -> Self::Output {
+        let mut result = self.data;
+        for i in 0..M {
+            for j in 0..N {
+                result[i][j] = self.data[i][j] + other.data[i][j];
+            }
+        }
+        Matrix { data: result }
+    }
+}
+
+impl<K, const M: usize, const N: usize> Sub for Matrix<K, M, N>
+where
+    K: Sub<Output = K> + Copy,
+{
+    type Output = Matrix<K, M, N>;
+
+    fn sub(self, other: Self) -> Self::Output {
+        let mut result = self.data;
+        for i in 0..M {
+            for j in 0..N {
+                result[i][j] = self.data[i][j] - other.data[i][j];
+            }
+        }
+        Matrix { data: result }
+    }
+}
+
+impl<K, const M: usize, const N: usize> Mul for Matrix<K, M, N>
+where
+    K: Mul<Output = K> + Copy,
+{
+    type Output = Matrix<K, M, N>;
+
+    fn mul(self, other: Self) -> Self::Output {
+        let mut result = self.data;
+        for i in 0..M {
+            for j in 0..N {
+                result[i][j] = self.data[i][j] * other.data[i][j];
+            }
+        }
+        Matrix { data: result }
+    }
+}
+
+impl<K, const M: usize, const N: usize> Div for Matrix<K, M, N>
+where
+    K: Div<Output = K> + Copy,
+{
+    type Output = Matrix<K, M, N>;
+
+    fn div(self, other: Self) -> Self::Output {
+        let mut result = self.data;
+        for i in 0..M {
+            for j in 0..N {
+                result[i][j] = self.data[i][j] / other.data[i][j];
+            }
+        }
+        Matrix { data: result }
+    }
+}
+
+impl<K, const M: usize, const N: usize> PartialEq for Matrix<K, M, N>
+where
+    K: PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        for i in 0..M {
+            for j in 0..N {
+                if self.data[i][j] != other.data[i][j] {
+                    return false;
+                }
+            }
+        }
+        true
     }
 }

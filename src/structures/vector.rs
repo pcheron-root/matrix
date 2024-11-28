@@ -1,4 +1,5 @@
 use std::ops::MulAssign;
+use std::ops::{Add, Div, Mul, Sub};
 
 pub struct Vector<T, const N: usize> {
     pub data: [T; N],
@@ -81,15 +82,80 @@ pub fn linear_combination<T: Clone + Copy + MulAssign + std::ops::AddAssign, con
     ret
 }
 
-// fn linear_combination<
-//     T: std::ops::AddAssign + std::ops::SubAssign + std::ops::MulAssign + Copy,
-//     const N: usize,
-// >(
-//     u: &[Vector<T, N>],
-//     coefs: &[T],
-// ) -> Vector<T, N> {
-//     for i in 0..N {
-//         u[i].scl(coefs[i]);
-//     }
-//     u[0]
-// }
+// -----------------------------------------------------------------
+// Operator overloading
+// -----------------------------------------------------------------
+
+impl<T, const N: usize> Add for Vector<T, N>
+where
+    T: Add<Output = T> + Copy,
+{
+    type Output = Vector<T, N>;
+
+    fn add(self, other: Self) -> Self::Output {
+        let mut result = [self.data[0]; N];
+        for i in 0..N {
+            result[i] = self.data[i] + other.data[i];
+        }
+        Vector { data: result }
+    }
+}
+
+impl<T, const N: usize> Sub for Vector<T, N>
+where
+    T: Sub<Output = T> + Copy,
+{
+    type Output = Vector<T, N>;
+
+    fn sub(self, other: Self) -> Self::Output {
+        let mut result = [self.data[0]; N];
+        for i in 0..N {
+            result[i] = self.data[i] - other.data[i];
+        }
+        Vector { data: result }
+    }
+}
+
+impl<T, const N: usize> Mul for Vector<T, N>
+where
+    T: Mul<Output = T> + Copy,
+{
+    type Output = Vector<T, N>;
+
+    fn mul(self, other: Self) -> Self::Output {
+        let mut result = [self.data[0]; N];
+        for i in 0..N {
+            result[i] = self.data[i] * other.data[i];
+        }
+        Vector { data: result }
+    }
+}
+
+impl<T, const N: usize> Div for Vector<T, N>
+where
+    T: Div<Output = T> + Copy,
+{
+    type Output = Vector<T, N>;
+
+    fn div(self, other: Self) -> Self::Output {
+        let mut result = [self.data[0]; N];
+        for i in 0..N {
+            result[i] = self.data[i] / other.data[i];
+        }
+        Vector { data: result }
+    }
+}
+
+impl<T, const N: usize> PartialEq for Vector<T, N>
+where
+    T: PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        for i in 0..N {
+            if self.data[i] != other.data[i] {
+                return false;
+            }
+        }
+        true
+    }
+}
