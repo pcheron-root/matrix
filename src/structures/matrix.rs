@@ -1,7 +1,5 @@
-// use super::vector::Vector;
 use std::fmt::Debug;
 use std::ops::{Add, Div, Mul, Sub};
-// use std::ops::AddAssign;
 
 #[derive(Clone, Debug)]
 pub struct Matrix<K, const M: usize, const N: usize> {
@@ -29,14 +27,6 @@ where
         }
         false
     }
-
-    // to do : a method that convert Matrix in Vector
-    // pub fn to_vector(self) -> Vector<T, N> {
-    //     let mut components = Vec::with_capacity(M * N);
-    //     for row in self.data.iter() {
-    //         components.extend_from_slice(row);
-    //     }
-    // }
 }
 
 impl<K, const M: usize, const N: usize> Matrix<K, M, N>
@@ -50,7 +40,9 @@ where
     }
 }
 
-// add / substract / scale
+// -----------------------------------------------------------------
+// Add / Substract / Scale
+// -----------------------------------------------------------------
 
 impl<
         K: std::fmt::Debug + std::ops::AddAssign + std::ops::SubAssign + std::ops::MulAssign,
@@ -82,23 +74,6 @@ where
         }
     }
 }
-
-// -----------------------------------------------------------------
-// Clone
-// -----------------------------------------------------------------
-
-// impl<K, const M: usize, const N: usize> Clone for Matrix<K, M, N>
-// where
-//     K: Clone,
-// {
-//     fn clone(&self) -> Self {
-//         let mut result: [[K; N]; M] = ;
-//         for i in 0..M {
-//             result[i] = self.data[i].clone();
-//         }
-//         Matrix { data: result }
-//     }
-// }
 
 // -----------------------------------------------------------------
 // Operator overloading

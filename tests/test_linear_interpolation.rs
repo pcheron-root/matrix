@@ -37,10 +37,4 @@ fn test_linear_interpolation_matrix() {
     let m3 = Matrix::new([[3.0, 3.0], [3.5, 1.5]]);
 
     assert_eq!(lerp(m1.clone(), m2.clone(), 0.5), m3);
-    // let v4 = Vector::new([[6.0, 6.0], [2.0, 3.0]]);
-
-    // assert_eq!(lerp(m1.clone(), m2.clone(), 2.0), m4);
-    // let v5 = Vector::new([[0.0, 0.0], []]);
-
-    // assert_eq!(lerp(m1, m2, -1.0), v5);
 }
