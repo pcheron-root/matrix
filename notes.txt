@@ -7,10 +7,13 @@ En rust, un trait est un mécanisme de polymorphisme qui permet de définir des 
 entre différents types. 
 Un trait spécifie un ensemble de méthodes qu'un type peut implémenter.
 
-Le trait ca a le meme objectif que les interfaces en Java ou des templates en C++
+Le trait en rust a le meme objectif que les interfaces en Java ou des templates en C++
 
 ex :
-Je veux que ma structure 
+Je veux que ma structure aie une fonction qui utilise println!("{:?}", ) avec en argument un variable
+qui peut avoir plusieurs type. pour pouvoir utiliser {:?}, ma variable doit avoir le trait Debug
+alors en amont, quand je declare ma fonction je dois presiser que le type de la variable que
+je vais utiliser, a bien le trait Debug.
 
 impl<K, const M: usize, const N: usize> Matrix<K, M, N>
 where
