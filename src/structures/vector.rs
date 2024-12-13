@@ -1,3 +1,4 @@
+use num_traits::{One, Zero};
 use std::fmt;
 use std::ops::MulAssign;
 use std::ops::{Add, Div, Mul, Sub};
@@ -207,3 +208,60 @@ where
         result
     }
 }
+
+// -----------------------------------------------------------------
+// 1-norm / 2-norm / inf-norm
+// -----------------------------------------------------------------
+
+impl<T, const N: usize> Vector<T, N>
+where
+    T: Zero + Copy + PartialOrd + std::ops::Sub<Output = T>,
+{
+    pub fn norm_1(&self) -> T {
+        let mut res = T::zero();
+        for i in 0..N {
+            if self.data[i] < T::zero() {
+                res = res - self.data[i];
+            } else {
+                res = res + self.data[i];
+            }
+        }
+        res
+    }
+}
+
+impl<T, const N: usize> Vector<T, N>
+where
+    T: Into<f32> + Copy,
+{
+    pub fn norm(&self) -> f32 {
+        let mut res: f32 = 0.0;
+        for i in 0..N {
+            let x: f32 = self.data[i].into();
+            res = res + x * x;
+        }
+        res.sqrt()
+    }
+}
+
+// impl<T, const N: usize> Vector<T, N>
+// where
+//     T: Zero + One + std::ops::Neg<Output = T> + std::cmp::PartialOrd,
+// {
+//     pub fn norm_inf(&self) -> T {
+//         let mut max;
+//         if self.data[0] < T::zero() {
+//             max = -self.data[0];
+//         } else {
+//             max = self.data[0];
+//         }
+
+//         for i in 1..N {
+//             if self.data[i] < T::zero() && (-self.data[i] > max) {
+//                 max = -self.data[i];
+//             } else if max < self.data[i] {
+//             }
+//         }
+//         max
+//     }
+// }
