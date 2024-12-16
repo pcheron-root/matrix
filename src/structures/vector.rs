@@ -265,3 +265,18 @@ where
 //         max
 //     }
 // }
+
+// -----------------------------------------------------------------
+// cosine of the angle between two vectors
+// dot product / norm2 u * norm2 v
+// -----------------------------------------------------------------
+
+impl<T, const N: usize> Vector<T, N>
+where
+    T: Into<f32> + Copy + Add<Output = T> + Mul<Output = T> + std::ops::Div<f32, Output = f32>,
+{
+    pub fn angle_cos(&self, v : &Self) -> f32 {
+        let dot_prod = self.dot(v);
+        dot_prod / (self.norm() * v.norm())
+    }
+}
