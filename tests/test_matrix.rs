@@ -1,4 +1,5 @@
 use matrix::Matrix;
+use matrix::Vector;
 
 #[test]
 fn test_create_matrix() {
@@ -90,4 +91,50 @@ fn test_scl_matrix() {
     assert_eq!(m2.data[0][0], -26.0);
     assert_eq!(m2.data[1][1], -6.0);
     assert_eq!(m2.data[1][2], -18.0);
+}
+
+// -----------------------------------------------------------------
+// mult matrix
+// -----------------------------------------------------------------
+
+#[test]
+fn test_mult_matrix_by_vector_1() {
+    let u = Matrix::new([[1.0, 0.0], [0.0, 1.0]]);
+    let v = Vector::new([4.0, 2.0]);
+    assert_eq!(u.mul_vec(&v), Vector::new([4.0, 2.0]));
+}
+
+#[test]
+fn test_mult_matrix_by_vector_2() {
+    let u = Matrix::new([[2.0, 0.0], [0.0, 2.0]]);
+    let v = Vector::new([4.0, 2.0]);
+    assert_eq!(u.mul_vec(&v), Vector::new([8.0, 4.0]));
+}
+
+#[test]
+fn test_mult_matrix_by_vector_3() {
+    let u = Matrix::new([[2.0, -2.0], [-2.0, 2.0]]);
+    let v = Vector::new([4.0, 2.0]);
+    assert_eq!(u.mul_vec(&v), Vector::new([4.0, -4.0]));
+}
+
+#[test]
+fn test_mult_matrix_by_matrix_1() {
+    let u = Matrix::new([[1.0, 0.0], [0.0, 1.0]]);
+    let v = Matrix::new([[1.0, 0.0], [0.0, 1.0]]);
+    assert_eq!(u.mul_mat(&v), Matrix::new([[1.0, 0.0], [0.0, 1.0]]));
+}
+
+#[test]
+fn test_mult_matrix_by_matrix_2() {
+    let u = Matrix::new([[1.0, 0.0], [0.0, 1.0]]);
+    let v = Matrix::new([[2.0, 1.0], [4.0, 2.0]]);
+    assert_eq!(u.mul_mat(&v), Matrix::new([[2.0, 1.0], [4.0, 2.0]]));
+}
+
+#[test]
+fn test_mult_matrix_by_matrix_3() {
+    let u = Matrix::new([[3.0, -5.0], [6.0, 8.0]]);
+    let v = Matrix::new([[2.0, 1.0], [4.0, 2.0]]);
+    assert_eq!(u.mul_mat(&v), Matrix::new([[-14.0, -7.0], [44.0, 22.0]]));
 }

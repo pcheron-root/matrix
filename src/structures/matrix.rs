@@ -1,3 +1,4 @@
+use crate::Vector;
 use std::fmt::Debug;
 use std::ops::{Add, Div, Mul, Sub};
 
@@ -180,3 +181,58 @@ where
         Matrix { data: result }
     }
 }
+
+// -----------------------------------------------------------------
+// Mult by Matrix and Vector
+// -----------------------------------------------------------------
+
+// impl<K, M, N> for Matrix<K, M, N> {
+
+//     fn  mul_vec(self, v: &Vector<K, M>) {
+
+//     }
+
+// }
+
+impl<K, const M: usize, const N: usize> Matrix<K, M, N>
+where
+    K: Mul<K, Output = K> + Add<Output = K> + Copy + Default,
+{
+    pub fn mul_vec(&self, vector: &Vector<K, N>) -> Vector<K, M> {
+        let mut result = [K::default(); M];
+
+        for i in 0..M {
+            let mut sum = K::default();
+            for j in 0..N {
+                sum = sum + self.data[i][j] * vector.data[j];
+            }
+            result[i] = sum;
+        }
+
+        Vector { data: result }
+    }
+
+    pub fn mul_mat(&self, other: &Matrix<K, N, M>) -> Matrix<K, M, M> {
+        let mut result = [[K::default(); M]; M];
+
+        for i in 0..M {
+            for j in 0..M {
+                let mut sum = K::default();
+                for k in 0..N {
+                    sum = sum + self.data[i][k] * other.data[k][j];
+                }
+                result[i][j] = sum;
+            }
+        }
+
+        Matrix { data: result }
+    }
+}
+
+// -----------------------------------------------------------------
+// Rank
+// -----------------------------------------------------------------
+
+// impl<K, const M: usize, const N: usize> Matrix<K, M, N> {
+//     pub fn rank(&self) -> usize {}
+// }

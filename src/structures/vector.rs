@@ -1,4 +1,4 @@
-use num_traits::{One, Zero};
+use num_traits::Zero;
 use std::fmt;
 use std::ops::MulAssign;
 use std::ops::{Add, Div, Mul, Sub};
@@ -275,7 +275,7 @@ impl<T, const N: usize> Vector<T, N>
 where
     T: Into<f32> + Copy + Add<Output = T> + Mul<Output = T> + std::ops::Div<f32, Output = f32>,
 {
-    pub fn angle_cos(&self, v : &Self) -> f32 {
+    pub fn angle_cos(&self, v: &Self) -> f32 {
         let dot_prod = self.dot(v);
         dot_prod / (self.norm() * v.norm())
     }
