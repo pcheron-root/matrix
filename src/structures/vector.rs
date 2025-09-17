@@ -1,5 +1,5 @@
 use num_traits::Zero;
-use std::fmt;
+use std::fmt::{self, Display};
 use std::ops::MulAssign;
 use std::ops::{Add, Div, Mul, Sub};
 
@@ -21,8 +21,21 @@ impl<T: std::fmt::Debug, const N: usize> Vector<T, N> {
     }
 }
 
+impl<T: fmt::Display, const N: usize> fmt::Display for Vector<T, N> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "[")?;
+        for (i, val) in self.data.iter().enumerate() {
+            if i > 0 {
+                write!(f, ", ")?;
+            }
+            write!(f, "{}", val)?;
+        }
+        write!(f, "]")
+    }
+}
+
 // -----------------------------------------------------------------
-// ADD / SUB / SCALE
+// Exercice 00 - implementing add / sub / scale
 // -----------------------------------------------------------------
 
 impl<T: std::ops::AddAssign, const N: usize> Vector<T, N>
@@ -60,7 +73,7 @@ where
 }
 
 // -----------------------------------------------------------------
-// linear combination
+// Exercice 01 - implementing linear combination
 // -----------------------------------------------------------------
 
 impl<T: Clone, const N: usize> Clone for Vector<T, N> {
@@ -71,13 +84,22 @@ impl<T: Clone, const N: usize> Clone for Vector<T, N> {
     }
 }
 
-pub fn linear_combination<T: Clone + Copy + MulAssign + std::ops::AddAssign, const N: usize>(
+pub fn linear_combination<T: Clone + Copy + MulAssign + std::ops::AddAssign + Display, const N: usize>(
     u: &[Vector<T, N>],
     c: &[T],
 ) -> Vector<T, N> {
+
+    assert_eq!(
+        u.len(),
+        c.len(),
+        "linear_combination: number of vectors ({}) does not match number of coefficients ({})",
+        u.len(),
+        c.len()
+    );
+
     let mut ret = u[0].clone();
     ret.scl(c[0]);
-    for i in 1..N {
+    for i in 1..u.len() {
         let mut elem = u[i].clone();
         elem.scl(c[i]);
         ret.add(&elem);
@@ -193,7 +215,7 @@ where
 }
 
 // -----------------------------------------------------------------
-// Dot product
+// Exercice 03 - Implementing Dot product (produit scalaire)
 // -----------------------------------------------------------------
 
 impl<T, const N: usize> Vector<T, N>

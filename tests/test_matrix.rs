@@ -39,7 +39,7 @@ fn test_clone_matrix() {
 }
 
 // -----------------------------------------------------------------
-// add / substrack / scale
+// Exercice 00 - add / substrack / scale
 // -----------------------------------------------------------------
 
 #[test]
@@ -60,6 +60,17 @@ fn test_add_matrix() {
 }
 
 #[test]
+fn test_add_matrix_2() {
+    let mut m1 = Matrix::new([[1, 2], [3, 4]]);
+    let m2 = Matrix::new([[7, 4], [-2, 2]]);
+    m1.add(&m2);
+    assert_eq!(m1.data[0][0], 8);
+    assert_eq!(m1.data[0][1], 6);
+    assert_eq!(m1.data[1][0], 1);
+    assert_eq!(m1.data[1][1], 6);
+}
+
+#[test]
 fn test_sub_matrix() {
     let mut m1 = Matrix::new([[13, 4, 2], [6, 3, 9]]);
     let m2 = Matrix::new([[29, 1, 1], [6, 9, 3]]);
@@ -77,6 +88,18 @@ fn test_sub_matrix() {
 }
 
 #[test]
+fn test_sub_matrix_2() {
+    let mut m1 = Matrix::new([[1, 2], [3, 4]]);
+    let m2 = Matrix::new([[7, 4], [-2, 2]]);
+
+    m1.sub(&m2);
+    assert_eq!(m1.data[0][0], -6);
+    assert_eq!(m1.data[0][1], -2);
+    assert_eq!(m1.data[1][0], 5);
+    assert_eq!(m1.data[1][1], 2);
+}
+
+#[test]
 fn test_scl_matrix() {
     let mut m1 = Matrix::new([[13, 4, 2], [6, 3, 9]]);
     let x1 = 4;
@@ -91,6 +114,17 @@ fn test_scl_matrix() {
     assert_eq!(m2.data[0][0], -26.0);
     assert_eq!(m2.data[1][1], -6.0);
     assert_eq!(m2.data[1][2], -18.0);
+}
+
+#[test]
+fn test_scl_matrix_2() {
+    let mut m1 = Matrix::new([[1, 2], [3, 4]]);
+    let x1 = 2;
+    m1.scl(x1);
+    assert_eq!(m1.data[0][0], 2);
+    assert_eq!(m1.data[0][1], 4);
+    assert_eq!(m1.data[1][0], 6);
+    assert_eq!(m1.data[1][1], 8);
 }
 
 // -----------------------------------------------------------------

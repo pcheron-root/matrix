@@ -12,7 +12,8 @@ fn test_print_vector() {
 }
 
 // -----------------------------------------------------------------
-// Add / substract / scale
+// Exercice 00 - Add / substract / scale
+//  (look at test_matrix.rs file for matrix part of ex00)
 // -----------------------------------------------------------------
 
 #[test]
@@ -33,6 +34,16 @@ fn test_add_vector() {
 }
 
 #[test]
+fn test_add_vector_2() {
+    let mut v1 = Vector::new([2, 3]);
+    let v2 = Vector::new([5, 7]);
+    v1.add(&v2);
+    assert_eq!(v1.data[0], 7);
+    assert_eq!(v1.data[1], 10);
+
+}
+
+#[test]
 fn test_sub_vector() {
     let mut v1 = Vector::new([13, 4, 2]);
     let v2 = Vector::new([12, 1, 1]);
@@ -47,6 +58,15 @@ fn test_sub_vector() {
     assert_eq!(v3.data[0], -8.0);
     assert_eq!(v3.data[1], 62.800000000000004);
     assert_eq!(v3.data[2], 1.14);
+}
+
+#[test]
+fn test_sub_vector_2() {
+    let mut v1 = Vector::new([2, 3]);
+    let v2 = Vector::new([5, 7]);
+    v1.sub(&v2);
+    assert_eq!(v1.data[0], -3);
+    assert_eq!(v1.data[1], -4);
 }
 
 #[test]
@@ -66,8 +86,17 @@ fn test_scl_vector() {
     assert_eq!(v2.data[2], 2.24);
 }
 
+#[test]
+fn test_scl_vector_2() {
+    let mut v1 = Vector::new([2., 3.]);
+    let x = 2.;
+    v1.scl(x);
+    assert_eq!(v1.data[0], 4.);
+    assert_eq!(v1.data[1], 6.);
+}
+
 // -----------------------------------------------------------------
-// linear combination
+// Exercice 01 - linear combination
 // -----------------------------------------------------------------
 
 use matrix::structures::vector;
@@ -87,4 +116,31 @@ fn test_linear_comb_matrix() {
     assert_eq!(v4.data[1], 9.8);
     assert_eq!(v4.data[2], 8.7);
     assert!((v4.data[0] - 7.5f32).abs() < 1e-6);
+}
+
+#[test]
+fn test_linear_comb_matrix_2() {
+    let v1 = Vector::new([1.0, 0.0, 0.0]);
+    let v2 = Vector::new([0.0, 1.0, 0.0]);
+    let v3 = Vector::new([0.0, 0.0, 1.0]);
+
+    let x1 = 10.;
+    let x2 = -2.;
+    let x3 = 0.5;
+
+    let v4 = vector::linear_combination(&[v1, v2, v3], &[x1, x2, x3]);
+    assert_eq!(v4.data[0], 10.);
+    assert_eq!(v4.data[1], -2.);
+    assert_eq!(v4.data[2], 0.5);
+
+    let v1 = Vector::new([1.0, 2.0, 3.0]);
+    let v2 = Vector::new([0.0, 10.0, -100.0]);
+
+    let x1 = 10.;
+    let x2 = -2.;
+
+    let v4 = vector::linear_combination(&[v1, v2], &[x1, x2]);
+    assert_eq!(v4.data[0], 10.);
+    assert_eq!(v4.data[1], 0.);
+    assert_eq!(v4.data[2], 230.);
 }
