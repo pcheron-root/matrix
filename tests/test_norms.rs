@@ -1,28 +1,42 @@
 use matrix::Vector;
 
-#[test]
-fn test_norm_1() {
-    let v1 = Vector::new([0.0, 0.0, 0.0]);
-    assert_eq!(v1.norm_1(), 0.0);
-    let v2 = Vector::new([1.0, 2.0, 3.0]);
-    assert_eq!(v2.norm_1(), 6.0);
-    let v3 = Vector::new([-1.0, -2.0]);
-    assert_eq!(v3.norm_1(), 3.0);
+// -----------------------------------------------------------------
+// Exercice 04 - Norm
+// -----------------------------------------------------------------
 
-    let v1 = Vector::new([0, 0, 0]);
-    assert_eq!(v1.norm_1(), 0);
-    let v2 = Vector::new([1, 2, 3]);
-    assert_eq!(v2.norm_1(), 6);
-    let v3 = Vector::new([-1, -2]);
-    assert_eq!(v3.norm_1(), 3);
+#[test]
+fn test_manha_norm() {
+    let v1 = Vector::new([0.0, 0.0, 0.0]);
+    assert_eq!(v1.manha_norm(), 0.0);
+    let v2 = Vector::new([1.0, 2.0, 3.0]);
+    assert_eq!(v2.manha_norm(), 6.0);
+    let v3 = Vector::new([-1.0, -2.0]);
+    assert_eq!(v3.manha_norm(), 3.0);
+
+    let v1 = Vector::new([0., 0., 0.]);
+    assert_eq!(v1.manha_norm(), 0.);
+    let v2 = Vector::new([1., 2., 3.]);
+    assert_eq!(v2.manha_norm(), 6.);
+    let v3 = Vector::new([-1., -2.]);
+    assert_eq!(v3.manha_norm(), 3.);
 }
 
 #[test]
-fn test_norm_2() {
+fn test_eucli_norm() {
     let v1 = Vector::new([0.0, 0.0, 0.0]);
-    assert_eq!(v1.norm(), 0.0);
+    assert_eq!(v1.eucli_norm(), 0.0);
     let v2 = Vector::new([1.0, 2.0, 3.0]);
-    assert_eq!(v2.norm(), 3.74165738);
+    assert_eq!(v2.eucli_norm(), 3.7416573867739413);
     let v3 = Vector::new([-1.0, -2.0]);
-    assert_eq!(v3.norm(), 2.236067977);
+    assert_eq!(v3.eucli_norm(), 2.23606797749979);
+}
+
+#[test]
+fn test_suprem_norm() {
+    let v1 = Vector::new([0.0, 0.0, 0.0]);
+    assert_eq!(v1.suprem_norm(), 0.0);
+    let v2 = Vector::new([1.0, 2.0, 3.0]);
+    assert_eq!(v2.suprem_norm(), 3.);
+    let v3 = Vector::new([-1.0, -2.0]);
+    assert_eq!(v3.suprem_norm(), 2.);
 }

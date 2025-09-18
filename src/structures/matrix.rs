@@ -183,16 +183,8 @@ where
 }
 
 // -----------------------------------------------------------------
-// Mult by Matrix and Vector
+// Exercice 07 - Mult by Matrix and Vector
 // -----------------------------------------------------------------
-
-// impl<K, M, N> for Matrix<K, M, N> {
-
-//     fn  mul_vec(self, v: &Vector<K, M>) {
-
-//     }
-
-// }
 
 impl<K, const M: usize, const N: usize> Matrix<K, M, N>
 where
@@ -212,11 +204,11 @@ where
         Vector { data: result }
     }
 
-    pub fn mul_mat(&self, other: &Matrix<K, N, M>) -> Matrix<K, M, M> {
-        let mut result = [[K::default(); M]; M];
+    pub fn mul_mat<const P: usize>(&self, other: &Matrix<K, N, P>) -> Matrix<K, M, P> {
+        let mut result = [[K::default(); P]; M];
 
         for i in 0..M {
-            for j in 0..M {
+            for j in 0..P {
                 let mut sum = K::default();
                 for k in 0..N {
                     sum = sum + self.data[i][k] * other.data[k][j];
@@ -230,9 +222,94 @@ where
 }
 
 // -----------------------------------------------------------------
-// Rank
+// Exercice 08 - Implementing Trace
 // -----------------------------------------------------------------
 
-// impl<K, const M: usize, const N: usize> Matrix<K, M, N> {
-//     pub fn rank(&self) -> usize {}
-// }
+impl<K, const N: usize> Matrix<K, N, N>
+where
+    K: Copy + Default + std::ops::Add<Output = K>,
+{
+    pub fn trace(&self) -> K {
+        let mut sum = K::default();
+        for i in 0..N {
+            sum = sum + self.data[i][i];
+        }
+        sum
+    }
+}
+
+// -----------------------------------------------------------------
+// Exercice 09 - Implement transpose matrix
+// -----------------------------------------------------------------
+
+impl<K, const M: usize, const N: usize> Matrix<K, M, N>
+where
+    K: Copy,
+{
+    pub fn transpose(&self) -> Matrix<K, N, M> {
+        let mut result = [[self.data[0][0]; M]; N];
+        for i in 0..M {
+            for j in 0..N {
+                result[j][i] = self.data[i][j];
+            }
+        }
+        Matrix { data: result }
+    }
+}
+
+// -----------------------------------------------------------------
+// Exercice 10 - Implement Row echelon form (forme echelonee)
+// -----------------------------------------------------------------
+
+impl<K, const M: usize, const N: usize> Matrix<K, M, N>
+where
+    K: Copy
+        + Default
+        + PartialEq
+        + std::ops::Div<Output = K>
+        + std::ops::Sub<Output = K>
+        + std::ops::Mul<Output = K>
+        + std::fmt::Debug,
+{
+    pub fn row_echelon(&self) -> Matrix<K, M, N> {
+        let mut mat = self.data; // copie pour ne pas modifier self
+        let mut lead = 0;
+
+        for r in 0..M {
+            if lead >= N {
+                break;
+            }
+
+            // Trouver la ligne avec un pivot non nul
+            let mut i = r;
+            while i < M && mat[i][lead] == K::default() {
+                i += 1;
+            }
+
+            if i == M {
+                lead += 1;
+                continue;
+            }
+
+            // Échanger lignes r et i
+            if i != r {
+                mat.swap(r, i);
+            }
+
+            // Mettre les éléments sous le pivot à zéro
+            for j in (r + 1)..M {
+                if mat[j][lead] != K::default() {
+                    let factor = mat[j][lead] / mat[r][lead];
+                    for k in lead..N {
+                        mat[j][k] = mat[j][k] - factor * mat[r][k];
+                    }
+                }
+            }
+
+            lead += 1;
+        }
+
+        Matrix { data: mat }
+    }
+}
+

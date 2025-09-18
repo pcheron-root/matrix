@@ -1,6 +1,10 @@
 use crate::Vector;
 use std::ops::{Mul, Sub};
 
+// -----------------------------------------------------------------
+// Exercice 06 - Implementing cross product
+// -----------------------------------------------------------------
+
 pub fn cross_product<T>(u: Vector<T, 3>, v: Vector<T, 3>) -> Vector<T, 3>
 where
     T: Mul<Output = T> + Sub<Output = T> + Copy + std::fmt::Debug,

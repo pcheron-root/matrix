@@ -3,6 +3,9 @@ use std::fmt::{self, Display};
 use std::ops::MulAssign;
 use std::ops::{Add, Div, Mul, Sub};
 
+use num_traits::Float;
+use num_traits::Signed;
+
 pub struct Vector<T, const N: usize> {
     pub data: [T; N],
 }
@@ -232,20 +235,20 @@ where
 }
 
 // -----------------------------------------------------------------
-// 1-norm / 2-norm / inf-norm
+// Exercice 04 - Norms
 // -----------------------------------------------------------------
 
 impl<T, const N: usize> Vector<T, N>
 where
-    T: Zero + Copy + PartialOrd + std::ops::Sub<Output = T>,
+    T: Zero + Copy + PartialOrd + Float + std::ops::Sub<Output = T>,
 {
-    pub fn norm_1(&self) -> T {
+    pub fn manha_norm(&self) -> T {
         let mut res = T::zero();
         for i in 0..N {
             if self.data[i] < T::zero() {
                 res = res - self.data[i];
             } else {
-                res = res + self.data[i];
+                res = res + self.data[i].abs();
             }
         }
         res
@@ -254,15 +257,31 @@ where
 
 impl<T, const N: usize> Vector<T, N>
 where
-    T: Into<f32> + Copy,
+    T: Float + Copy,
 {
-    pub fn norm(&self) -> f32 {
-        let mut res: f32 = 0.0;
+    pub fn eucli_norm(&self) -> T {
+        let mut res = T::zero();
         for i in 0..N {
-            let x: f32 = self.data[i].into();
-            res = res + x * x;
+            res = res + self.data[i] * self.data[i];
         }
         res.sqrt()
+    }
+}
+
+impl<T, const N: usize> Vector<T, N>
+where
+    T: Signed + Copy + PartialOrd,
+{
+    // maximum des valeurs absolue du vecteur
+    pub fn suprem_norm(&self) -> T {
+        let mut res = T::zero();
+        for i in 0..N {
+            let val = self.data[i].abs();
+            if val > res {
+                res = val;
+            }
+        }
+        res
     }
 }
 
@@ -288,6 +307,9 @@ where
 //     }
 // }
 
+
+// -----------------------------------------------------------------
+// Exercice 05 - Implementing cosine
 // -----------------------------------------------------------------
 // cosine of the angle between two vectors
 // dot product / norm2 u * norm2 v
@@ -295,10 +317,10 @@ where
 
 impl<T, const N: usize> Vector<T, N>
 where
-    T: Into<f32> + Copy + Add<Output = T> + Mul<Output = T> + std::ops::Div<f32, Output = f32>,
+    T: Float + Into<f32> + Copy + Add<Output = T> + Mul<Output = T> + std::ops::Div<f32, Output = f32>,
 {
-    pub fn angle_cos(&self, v: &Self) -> f32 {
+    pub fn angle_cos(&self, v: &Self) -> T {
         let dot_prod = self.dot(v);
-        dot_prod / (self.norm() * v.norm())
+        dot_prod / (self.eucli_norm() * v.eucli_norm())
     }
 }

@@ -1,6 +1,10 @@
 use matrix::cross_product::cross_product;
 use matrix::Vector;
 
+// -----------------------------------------------------------------
+// Exercice 06 - Cross product
+// -----------------------------------------------------------------
+
 #[test]
 fn test_cross_product_1() {
     let u = Vector::new([0.0, 0.0, 1.0]);

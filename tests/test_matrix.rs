@@ -128,7 +128,7 @@ fn test_scl_matrix_2() {
 }
 
 // -----------------------------------------------------------------
-// mult matrix
+// Exercice 07 - Linear map, matri mult
 // -----------------------------------------------------------------
 
 #[test]
@@ -171,4 +171,11 @@ fn test_mult_matrix_by_matrix_3() {
     let u = Matrix::new([[3.0, -5.0], [6.0, 8.0]]);
     let v = Matrix::new([[2.0, 1.0], [4.0, 2.0]]);
     assert_eq!(u.mul_mat(&v), Matrix::new([[-14.0, -7.0], [44.0, 22.0]]));
+}
+
+#[test]
+fn test_mult_matrix_by_matrix_4() {
+    let u = Matrix::new([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]);
+    let v = Matrix::new([[7.0, 8.0], [9.0, 10.0], [11.0, 12.0]]);
+    assert_eq!(u.mul_mat(&v), Matrix::new([[58.0, 64.0], [139.0, 154.0]]));
 }
