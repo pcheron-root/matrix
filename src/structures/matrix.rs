@@ -547,7 +547,7 @@ where
 {
     pub fn rank(&self) -> usize {
         let echelon = self.row_echelon();
-        let zero = K::from(0u8);
+        let zero = <K as From<u8>>::from(0u8);
 
         echelon
             .data
