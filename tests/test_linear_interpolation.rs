@@ -1,9 +1,10 @@
 use matrix::linear_interpolation::lerp;
 use matrix::{Matrix, Vector};
 
-/////////////////////////////////////////////////////
-/// Exercice 02 - Linear interpolation
-/////////////////////////////////////////////////////
+// -----------------------------------------------------------------
+// Exercice 02 - Linear interpolation
+// -----------------------------------------------------------------
+
 
 #[test]
 fn test_linear_interpolation_float() {

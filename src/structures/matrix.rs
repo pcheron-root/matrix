@@ -1,6 +1,7 @@
 use crate::Vector;
 use std::fmt::Debug;
 use std::ops::{Add, Div, Mul, Sub};
+use num_traits::Float;
 
 #[derive(Clone, Debug)]
 pub struct Matrix<K, const M: usize, const N: usize> {
@@ -269,10 +270,77 @@ where
         + std::ops::Div<Output = K>
         + std::ops::Sub<Output = K>
         + std::ops::Mul<Output = K>
+        + Sized
+        + Float
         + std::fmt::Debug,
 {
     pub fn row_echelon(&self) -> Matrix<K, M, N> {
         let mut mat = self.data; // copie pour ne pas modifier self
+        let mut lead = 0;
+
+        for r in 0..M {
+            if lead >= N {
+                break;
+            }
+
+            // Recherche du meilleur pivot (en supposant que K supporte abs() et PartialOrd)
+            let mut best_pivot = None;
+            let mut best_abs = K::default(); // ou une valeur minimale appropriée
+
+            for i in r..M {
+                if mat[i][lead] != K::default() {
+                    let current_abs = mat[i][lead].abs(); // nécessite que K implémente abs()
+                    if best_pivot.is_none() || current_abs > best_abs {
+                        best_abs = current_abs;
+                        best_pivot = Some(i);
+                    }
+                }
+            }
+
+            let pivot_row = match best_pivot {
+                Some(i) => i,
+                None => {
+                    lead += 1;
+                    continue; // Pas de pivot trouvé dans cette colonne
+                }
+            };
+
+            // Échanger lignes r et pivot_row
+            if pivot_row != r {
+                mat.swap(r, pivot_row);
+        }
+
+            // Mettre les éléments sous le pivot à zéro
+            for j in (r + 1)..M {
+                if mat[j][lead] != K::default() {
+                    let factor = mat[j][lead] / mat[r][lead];
+                    for k in lead..N {
+                        mat[j][k] = mat[j][k] - factor * mat[r][k];
+                    }
+                }
+            }
+
+            lead += 1;
+        }
+
+        Matrix { data: mat }
+    }
+}
+
+impl<K, const M: usize, const N: usize> Matrix<K, M, N>
+where
+    K: Copy
+        + Default
+        + PartialEq
+        + std::ops::Div<Output = K>
+        + std::ops::Sub<Output = K>
+        + std::ops::Mul<Output = K>
+        + std::ops::Add<Output = K>
+        + std::ops::Neg<Output = K>
+        + std::fmt::Debug,
+{
+    pub fn rref(&self) -> Matrix<K, M, N> {
+        let mut mat = self.data;
         let mut lead = 0;
 
         for r in 0..M {
@@ -288,6 +356,9 @@ where
 
             if i == M {
                 lead += 1;
+                if lead >= N {
+                    break;
+                }
                 continue;
             }
 
@@ -296,10 +367,18 @@ where
                 mat.swap(r, i);
             }
 
-            // Mettre les éléments sous le pivot à zéro
-            for j in (r + 1)..M {
-                if mat[j][lead] != K::default() {
-                    let factor = mat[j][lead] / mat[r][lead];
+            // Normaliser la ligne pivot
+            let pivot = mat[r][lead];
+            if pivot != K::default() {
+                for k in lead..N {
+                    mat[r][k] = mat[r][k] / pivot;
+                }
+            }
+
+            // Mettre à zéro toutes les autres lignes (au-dessus et au-dessous)
+            for j in 0..M {
+                if j != r && mat[j][lead] != K::default() {
+                    let factor = mat[j][lead];
                     for k in lead..N {
                         mat[j][k] = mat[j][k] - factor * mat[r][k];
                     }
@@ -446,6 +525,35 @@ impl<const N: usize> Matrix<f64, N, N> {
         }
 
         Some(Matrix { data: inv })
+    }
+}
+
+// -----------------------------------------------------------------
+// Exercice 13 - Implementing rank
+// -----------------------------------------------------------------
+
+impl<K, const M: usize, const N: usize> Matrix<K, M, N>
+where
+    K: PartialEq
+    + From<u8> 
+    + Copy
+    + Default
+    + PartialEq
+    + std::ops::Div<Output = K>
+    + std::ops::Sub<Output = K>
+    + std::ops::Mul<Output = K>
+    + std::fmt::Debug
+    + Float,
+{
+    pub fn rank(&self) -> usize {
+        let echelon = self.row_echelon();
+        let zero = K::from(0u8);
+
+        echelon
+            .data
+            .iter()
+            .filter(|row| row.iter().any(|&x| x != zero))
+            .count()
     }
 }
 
