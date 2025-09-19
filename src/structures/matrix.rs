@@ -275,51 +275,39 @@ where
         + std::fmt::Debug,
 {
     pub fn row_echelon(&self) -> Matrix<K, M, N> {
-        let mut mat = self.data; // copie pour ne pas modifier self
+        let mut mat = self.data;
         let mut lead = 0;
+        let epsilon = K::epsilon();
 
         for r in 0..M {
-            if lead >= N {
-                break;
-            }
+            if lead >= N { break; }
 
-            // Recherche du meilleur pivot (en supposant que K supporte abs() et PartialOrd)
-            let mut best_pivot = None;
-            let mut best_abs = K::default(); // ou une valeur minimale appropriée
+            // Recherche du meilleur pivot à partir de la ligne r
+            let pivot_row = (r..M)
+                .filter(|&i| mat[i][lead].abs() > epsilon)
+                .max_by(|&i, &j| mat[i][lead].abs().partial_cmp(&mat[j][lead].abs()).unwrap());
 
-            for i in r..M {
-                if mat[i][lead] != K::default() {
-                    let current_abs = mat[i][lead].abs(); // nécessite que K implémente abs()
-                    if best_pivot.is_none() || current_abs > best_abs {
-                        best_abs = current_abs;
-                        best_pivot = Some(i);
-                    }
-                }
-            }
-
-            let pivot_row = match best_pivot {
+            let pivot_row = match pivot_row {
                 Some(i) => i,
-                None => {
-                    lead += 1;
-                    continue; // Pas de pivot trouvé dans cette colonne
-                }
+                None => { lead += 1; continue; }
             };
 
-            // Échanger lignes r et pivot_row
+            // Échange de lignes si nécessaire
             if pivot_row != r {
                 mat.swap(r, pivot_row);
-        }
+            }
 
-            // Mettre les éléments sous le pivot à zéro
+            let pivot = mat[r][lead];
+
+            // CORRECTION : Éliminer TOUTES les lignes sous le pivot
             for j in (r + 1)..M {
-                if mat[j][lead] != K::default() {
-                    let factor = mat[j][lead] / mat[r][lead];
-                    for k in lead..N {
+                if mat[j][lead].abs() > epsilon {
+                    let factor = mat[j][lead] / pivot;
+                    for k in 0..N { // Commencer à k=0, pas k=lead
                         mat[j][k] = mat[j][k] - factor * mat[r][k];
                     }
                 }
             }
-
             lead += 1;
         }
 
