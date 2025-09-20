@@ -275,44 +275,53 @@ where
         + std::fmt::Debug,
 {
     pub fn row_echelon(&self) -> Matrix<K, M, N> {
-        let mut mat = self.data;
-        let mut lead = 0;
-        let epsilon = K::epsilon();
-
-        for r in 0..M {
-            if lead >= N { break; }
-
-            // Recherche du meilleur pivot à partir de la ligne r
-            let pivot_row = (r..M)
-                .filter(|&i| mat[i][lead].abs() > epsilon)
-                .max_by(|&i, &j| mat[i][lead].abs().partial_cmp(&mat[j][lead].abs()).unwrap());
-
-            let pivot_row = match pivot_row {
-                Some(i) => i,
-                None => { lead += 1; continue; }
-            };
-
-            // Échange de lignes si nécessaire
-            if pivot_row != r {
-                mat.swap(r, pivot_row);
-            }
-
-            let pivot = mat[r][lead];
-
-            // CORRECTION : Éliminer TOUTES les lignes sous le pivot
-            for j in (r + 1)..M {
-                if mat[j][lead].abs() > epsilon {
-                    let factor = mat[j][lead] / pivot;
-                    for k in 0..N { // Commencer à k=0, pas k=lead
-                        mat[j][k] = mat[j][k] - factor * mat[r][k];
+    let mut mat = self.data;
+    let mut lead = 0;
+    let mut row = 0;
+    let epsilon = K::epsilon();
+    
+    while row < M && lead < N {
+        // Recherche du meilleur pivot à partir de la ligne courante
+        let pivot_row = (row..M)
+            .filter(|&i| mat[i][lead].abs() > epsilon)
+            .max_by(|&i, &j| mat[i][lead].abs().partial_cmp(&mat[j][lead].abs()).unwrap());
+        
+        match pivot_row {
+            Some(pivot_row) => {
+                // Pivot trouvé : échanger les lignes si nécessaire
+                if pivot_row != row {
+                    eprintln!("mat before swap: {:?}", mat);
+                    mat.swap(row, pivot_row);
+                    eprintln!("mat after swap: {:?}", mat);
+                }
+                
+                let pivot = mat[row][lead];
+                
+                // Éliminer toutes les lignes sous le pivot
+                for j in (row + 1)..M {
+                    if mat[j][lead].abs() > epsilon {
+                        let factor = mat[j][lead] / pivot;
+                        eprintln!("mat before elimination: {:?}", mat);
+                        for k in 0..N {
+                            mat[j][k] = mat[j][k] - factor * mat[row][k];
+                        }
+                        eprintln!("mat after elimination: {:?}", mat);
                     }
                 }
+                
+                // Passer à la ligne et colonne suivantes
+                row += 1;
+                lead += 1;
             }
-            lead += 1;
+            None => {
+                // Aucun pivot dans cette colonne : passer à la colonne suivante
+                lead += 1;
+            }
         }
-
-        Matrix { data: mat }
     }
+    
+    Matrix { data: mat }
+}
 }
 
 impl<K, const M: usize, const N: usize> Matrix<K, M, N>
@@ -471,6 +480,7 @@ impl<const N: usize> Matrix<f64, N, N> {
         }
 
         // Gauss-Jordan
+        // ! a changer par la row echelon form
         for i in 0..N {
             // Pivot : chercher une ligne avec un coefficient non nul
             if aug[i][i] == 0.0 {
