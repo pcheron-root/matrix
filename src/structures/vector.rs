@@ -87,6 +87,7 @@ impl<T: Clone, const N: usize> Clone for Vector<T, N> {
     }
 }
 
+// O(n)
 pub fn linear_combination<T: Clone + Copy + MulAssign + std::ops::AddAssign + Display, const N: usize>(
     u: &[Vector<T, N>],
     c: &[T],
@@ -272,7 +273,6 @@ impl<T, const N: usize> Vector<T, N>
 where
     T: Signed + Copy + PartialOrd,
 {
-    // maximum des valeurs absolue du vecteur
     pub fn suprem_norm(&self) -> T {
         let mut res = T::zero();
         for i in 0..N {
@@ -315,12 +315,18 @@ where
 // dot product / norm2 u * norm2 v
 // -----------------------------------------------------------------
 
+// const usize a la place de N ?
 impl<T, const N: usize> Vector<T, N>
 where
     T: Float + Into<f32> + Copy + Add<Output = T> + Mul<Output = T> + std::ops::Div<f32, Output = f32>,
 {
     pub fn angle_cos(&self, v: &Self) -> T {
         let dot_prod = self.dot(v);
+        let norm_self = self.eucli_norm();
+        let norm_other_v = v.eucli_norm();
+        if norm_self == T::zero() || norm_other_v == T::zero() {
+            panic!("Cannot compute angle with zero-length vector");
+        }
         dot_prod / (self.eucli_norm() * v.eucli_norm())
     }
 }

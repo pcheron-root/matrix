@@ -24,10 +24,11 @@ where
 
     pub fn is_square(&self) -> bool {
         let s = &self.shape();
-        if s[0] == s[1] {
-            return true;
-        }
-        false
+        s[0] == s[1]
+        // if s[0] == s[1] {
+        //     return true;
+        // }
+        // false
     }
 }
 
@@ -290,9 +291,9 @@ where
             Some(pivot_row) => {
                 // Pivot trouvé : échanger les lignes si nécessaire
                 if pivot_row != row {
-                    eprintln!("mat before swap: {:?}", mat);
+                    // eprintln!("mat before swap: {:?}", mat);
                     mat.swap(row, pivot_row);
-                    eprintln!("mat after swap: {:?}", mat);
+                    // eprintln!("mat after swap: {:?}", mat);
                 }
                 
                 let pivot = mat[row][lead];
@@ -301,11 +302,11 @@ where
                 for j in (row + 1)..M {
                     if mat[j][lead].abs() > epsilon {
                         let factor = mat[j][lead] / pivot;
-                        eprintln!("mat before elimination: {:?}", mat);
+                        // eprintln!("mat before elimination: {:?}", mat);
                         for k in 0..N {
                             mat[j][k] = mat[j][k] - factor * mat[row][k];
                         }
-                        eprintln!("mat after elimination: {:?}", mat);
+                        // eprintln!("mat after elimination: {:?}", mat);
                     }
                 }
                 

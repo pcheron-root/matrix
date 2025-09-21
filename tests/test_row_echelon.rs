@@ -5,6 +5,36 @@ use matrix::Matrix;
 // Exercice 10 - Row echelon
 // -----------------------------------------------------------------
 
+// passe pas
+// #[test]
+// fn test_row_echelon_0() {
+//     let mat = Matrix::new([[1.0, 2.0],
+//         [3.0, 4.0]]);
+//     let ref_mat = mat.row_echelon();
+//     assert_eq!(ref_mat, Matrix::new([[1.0, 0.0],
+//         [0.0, 1.0]]));
+// }
+
+// #[test]
+// fn test_row_echelon_3() {
+//     let mat = Matrix::new([[1.0, 2.0],
+//         [2.0, 4.0]]);
+//     let ref_mat = mat.row_echelon();
+//     assert_eq!(ref_mat, Matrix::new([[1.0, 2.0],
+//         [0.0, 0.0]]));
+// }
+
+#[test]
+fn test_row_echelon_0() {
+    let mat = Matrix::new([[1.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0],]);
+    let ref_mat = mat.row_echelon();
+    assert_eq!(ref_mat, Matrix::new([[1.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0]]));
+}
+
 #[test]
 fn test_row_echelon_2x2() {
     let mat = Matrix::new([[2.0, 1.0],
