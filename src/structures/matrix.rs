@@ -456,76 +456,79 @@ where
 // Exercice 12 - Implementing inverse matrix calculus
 // -----------------------------------------------------------------
 
-// impl<const N: usize> Matrix<f64, N, N> {
-//     pub fn inverse(&self) -> Result<Matrix<f64, N, N>, &'static str> {
-//         // Vérifier si la matrice est inversible
-//         let det = self.determinant();
-//         if det.abs() < 1e-10 {
-//             return Err("Matrice non inversible : déterminant nul");
-//         }
+impl<const N: usize> Matrix<f64, N, N> {
+    pub fn inverse(&self) -> Option<Matrix<f64, N, N>> {
+        // Vérifier si la matrice est inversible
+        // let det = self.determinant();
+        // if det.abs() < 1e-10 {  // Tolérance numérique pour éviter les erreurs d'arrondi
+        //     return None;  // Matrice singulière (non inversible)
+        // }
+        if self.rank() != N {
+            return None;
+        }
 
-//         // Construire la matrice augmentée [A | I]
-//         let mut aug = vec![vec![0.0; 2 * N]; N];
-//         for i in 0..N {
-//             for j in 0..N {
-//                 aug[i][j] = self.data[i][j];
-//             }
-//             aug[i][N + i] = 1.0;
-//         }
+        // Construire la matrice augmentée [A | I]
+        let mut aug = vec![vec![0.0; 2 * N]; N];
+        for i in 0..N {
+            for j in 0..N {
+                aug[i][j] = self.data[i][j];
+            }
+            aug[i][N + i] = 1.0;
+        }
 
-//         // Gauss-Jordan
-//         for i in 0..N {
-//             // Pivot : chercher une ligne avec un coefficient non nul
-//             if aug[i][i].abs() < 1e-10 {
-//                 let mut found = false;
-//                 for k in i + 1..N {
-//                     if aug[k][i].abs() >= 1e-10 {
-//                         aug.swap(i, k);
-//                         found = true;
-//                         break;
-//                     }
-//                 }
-//                 if !found {
-//                     return Err("Matrice non inversible : pivot nul");
-//                 }
-//             }
+        // Gauss-Jordan
+        for i in 0..N {
+            // Pivot : chercher une ligne avec un coefficient non nul
+            if aug[i][i].abs() < 1e-10 {  // Utiliser abs() ici aussi
+                let mut found = false;
+                for k in i + 1..N {
+                    if aug[k][i].abs() >= 1e-10 {
+                        aug.swap(i, k);
+                        found = true;
+                        break;
+                    }
+                }
+                if !found {
+                    return None; // Matrice non inversible
+                }
+            }
 
-//             // Normaliser la ligne pivot
-//             let pivot = aug[i][i];
-//             for j in 0..2 * N {
-//                 aug[i][j] /= pivot;
-//             }
+            // Normaliser la ligne pivot
+            let pivot = aug[i][i];
+            for j in 0..2 * N {
+                aug[i][j] /= pivot;
+            }
 
-//             // Éliminer les autres lignes
-//             for k in 0..N {
-//                 if k != i {
-//                     let factor = aug[k][i];
-//                     for j in 0..2 * N {
-//                         aug[k][j] -= factor * aug[i][j];
-//                     }
-//                 }
-//             }
-//         }
+            // Éliminer les autres lignes
+            for k in 0..N {
+                if k != i {
+                    let factor = aug[k][i];
+                    for j in 0..2 * N {
+                        aug[k][j] -= factor * aug[i][j];
+                    }
+                }
+            }
+        }
 
-//         // Extraire la partie droite comme inverse
-//         let mut inv = [[0.0; N]; N];
-//         for i in 0..N {
-//             for j in 0..N {
-//                 inv[i][j] = aug[i][N + j];
-//             }
-//         }
-//         Ok(Matrix { data: inv })
-//     }
-//     /// Retourne l'identité NxN
-//     pub fn identity() -> Self {
-//         let mut data = [[0.0; N]; N];
-//         for i in 0..N {
-//             data[i][i] = 1.0;
-//         }
-//         Matrix { data }
-//     }
+        // Extraire la partie droite comme inverse
+        let mut inv = [[0.0; N]; N];
+        for i in 0..N {
+            for j in 0..N {
+                inv[i][j] = aug[i][N + j];
+            }
+        }
+        Some(Matrix { data: inv })
+    }
+    /// Retourne l'identité NxN
+    pub fn identity() -> Self {
+        let mut data = [[0.0; N]; N];
+        for i in 0..N {
+            data[i][i] = 1.0;
+        }
+        Matrix { data }
+    }
 
-// }
+}
 
 // -----------------------------------------------------------------
 // Exercice 13 - Implementing rank

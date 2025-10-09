@@ -62,7 +62,7 @@ fn test_rank_full_3x3() {
 
 #[test]
 fn test_rank_rectangular() {
-    // 3x2 avec deux colonnes linéairement indépendantes
+    // 3x2 avec deux vecteurs linéairement indépendantes
     let mat = Matrix::new([
         [1.0, 2.0],
         [3.0, 4.0],
