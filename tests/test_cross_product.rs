@@ -28,3 +28,5 @@ fn test_cross_product_3() {
     let w = Vector::new([17.0, -58.0, -16.0]);
     assert_eq!(cross_product(u, v), w);
 }
+
+

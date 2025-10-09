@@ -276,53 +276,50 @@ where
         + std::fmt::Debug,
 {
     pub fn row_echelon(&self) -> Matrix<K, M, N> {
-    let mut mat = self.data;
-    let mut lead = 0;
-    let mut row = 0;
-    let epsilon = K::epsilon();
-    
-    while row < M && lead < N {
-        // Recherche du meilleur pivot à partir de la ligne courante
-        let pivot_row = (row..M)
-            .filter(|&i| mat[i][lead].abs() > epsilon)
-            .max_by(|&i, &j| mat[i][lead].abs().partial_cmp(&mat[j][lead].abs()).unwrap());
+        let mut mat = self.data;
+        let mut lead = 0;
+        let mut row = 0;
+        let epsilon = K::epsilon();
         
-        match pivot_row {
-            Some(pivot_row) => {
-                // Pivot trouvé : échanger les lignes si nécessaire
-                if pivot_row != row {
-                    // eprintln!("mat before swap: {:?}", mat);
-                    mat.swap(row, pivot_row);
-                    // eprintln!("mat after swap: {:?}", mat);
-                }
-                
-                let pivot = mat[row][lead];
-                
-                // Éliminer toutes les lignes sous le pivot
-                for j in (row + 1)..M {
-                    if mat[j][lead].abs() > epsilon {
-                        let factor = mat[j][lead] / pivot;
-                        // eprintln!("mat before elimination: {:?}", mat);
-                        for k in 0..N {
-                            mat[j][k] = mat[j][k] - factor * mat[row][k];
-                        }
-                        // eprintln!("mat after elimination: {:?}", mat);
+        while row < M && lead < N {
+    let pivot_row = (row..M)
+        .filter(|&i| mat[i][lead].abs() > epsilon)
+        .max_by(|&i, &j| mat[i][lead].abs().partial_cmp(&mat[j][lead].abs()).unwrap());
+    
+    match pivot_row {
+        Some(pivot_row) => {
+            if pivot_row != row {
+                mat.swap(row, pivot_row);
+            }
+            
+            let pivot = mat[row][lead];
+            
+            // Normaliser UNIQUEMENT la ligne courante (row)
+            for k in lead..N {
+                mat[row][k] = mat[row][k] / pivot;
+            }
+            
+            // Éliminer les lignes SOUS le pivot (j > row)
+            for j in (row + 1)..M {
+                let factor = mat[j][lead];
+                if factor.abs() > epsilon {
+                    for k in lead..N {
+                        mat[j][k] = mat[j][k] - factor * mat[row][k];
                     }
                 }
-                
-                // Passer à la ligne et colonne suivantes
-                row += 1;
-                lead += 1;
             }
-            None => {
-                // Aucun pivot dans cette colonne : passer à la colonne suivante
-                lead += 1;
-            }
+            
+            row += 1;
+            lead += 1;
+        }
+        None => {
+            lead += 1;
         }
     }
-    
-    Matrix { data: mat }
 }
+
+        Matrix { data: mat }
+    }
 }
 
 impl<K, const M: usize, const N: usize> Matrix<K, M, N>
@@ -459,73 +456,76 @@ where
 // Exercice 12 - Implementing inverse matrix calculus
 // -----------------------------------------------------------------
 
-impl<const N: usize> Matrix<f64, N, N> {
-    /// Retourne l'identité NxN
-    pub fn identity() -> Self {
-        let mut data = [[0.0; N]; N];
-        for i in 0..N {
-            data[i][i] = 1.0;
-        }
-        Matrix { data }
-    }
+// impl<const N: usize> Matrix<f64, N, N> {
+//     pub fn inverse(&self) -> Result<Matrix<f64, N, N>, &'static str> {
+//         // Vérifier si la matrice est inversible
+//         let det = self.determinant();
+//         if det.abs() < 1e-10 {
+//             return Err("Matrice non inversible : déterminant nul");
+//         }
 
-    /// Calcule l'inverse via Gauss-Jordan
-    pub fn inverse(&self) -> Option<Matrix<f64, N, N>> {
-        // Construire la matrice augmentée [A | I]
-        let mut aug = vec![vec![0.0; 2 * N]; N];
-        for i in 0..N {
-            for j in 0..N {
-                aug[i][j] = self.data[i][j];
-            }
-            aug[i][N + i] = 1.0;
-        }
+//         // Construire la matrice augmentée [A | I]
+//         let mut aug = vec![vec![0.0; 2 * N]; N];
+//         for i in 0..N {
+//             for j in 0..N {
+//                 aug[i][j] = self.data[i][j];
+//             }
+//             aug[i][N + i] = 1.0;
+//         }
 
-        // Gauss-Jordan
-        // ! a changer par la row echelon form
-        for i in 0..N {
-            // Pivot : chercher une ligne avec un coefficient non nul
-            if aug[i][i] == 0.0 {
-                let mut found = false;
-                for k in i + 1..N {
-                    if aug[k][i] != 0.0 {
-                        aug.swap(i, k);
-                        found = true;
-                        break;
-                    }
-                }
-                if !found {
-                    return None; // Matrice non inversible
-                }
-            }
+//         // Gauss-Jordan
+//         for i in 0..N {
+//             // Pivot : chercher une ligne avec un coefficient non nul
+//             if aug[i][i].abs() < 1e-10 {
+//                 let mut found = false;
+//                 for k in i + 1..N {
+//                     if aug[k][i].abs() >= 1e-10 {
+//                         aug.swap(i, k);
+//                         found = true;
+//                         break;
+//                     }
+//                 }
+//                 if !found {
+//                     return Err("Matrice non inversible : pivot nul");
+//                 }
+//             }
 
-            // Normaliser la ligne pivot
-            let pivot = aug[i][i];
-            for j in 0..2 * N {
-                aug[i][j] /= pivot;
-            }
+//             // Normaliser la ligne pivot
+//             let pivot = aug[i][i];
+//             for j in 0..2 * N {
+//                 aug[i][j] /= pivot;
+//             }
 
-            // Éliminer les autres lignes
-            for k in 0..N {
-                if k != i {
-                    let factor = aug[k][i];
-                    for j in 0..2 * N {
-                        aug[k][j] -= factor * aug[i][j];
-                    }
-                }
-            }
-        }
+//             // Éliminer les autres lignes
+//             for k in 0..N {
+//                 if k != i {
+//                     let factor = aug[k][i];
+//                     for j in 0..2 * N {
+//                         aug[k][j] -= factor * aug[i][j];
+//                     }
+//                 }
+//             }
+//         }
 
-        // Extraire la partie droite comme inverse
-        let mut inv = [[0.0; N]; N];
-        for i in 0..N {
-            for j in 0..N {
-                inv[i][j] = aug[i][N + j];
-            }
-        }
+//         // Extraire la partie droite comme inverse
+//         let mut inv = [[0.0; N]; N];
+//         for i in 0..N {
+//             for j in 0..N {
+//                 inv[i][j] = aug[i][N + j];
+//             }
+//         }
+//         Ok(Matrix { data: inv })
+//     }
+//     /// Retourne l'identité NxN
+//     pub fn identity() -> Self {
+//         let mut data = [[0.0; N]; N];
+//         for i in 0..N {
+//             data[i][i] = 1.0;
+//         }
+//         Matrix { data }
+//     }
 
-        Some(Matrix { data: inv })
-    }
-}
+// }
 
 // -----------------------------------------------------------------
 // Exercice 13 - Implementing rank
@@ -547,12 +547,12 @@ where
     pub fn rank(&self) -> usize {
         let echelon = self.row_echelon();
         let zero = <K as From<u8>>::from(0u8);
+        let epsilon = K::epsilon();
 
         echelon
             .data
             .iter()
-            .filter(|row| row.iter().any(|&x| x != zero))
+            .filter(|row| row.iter().any(|&x| (x - zero).abs() > epsilon))
             .count()
     }
 }
-

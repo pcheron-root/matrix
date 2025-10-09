@@ -6,6 +6,14 @@ fn test_dot_prod_vector() {
     let v2 = Vector::new([1.0, 1.0]);
     assert_eq!(v1.dot(&v2), 0.0);
 
+    let v1 = Vector::new([3.0, 3.0]);
+    let v2 = Vector::new([1.0, -1.0]);
+    assert_eq!(v1.dot(&v2), 0.0);
+
+    let v1 = Vector::new([3, 3]);
+    let v2 = Vector::new([1, -1]);
+    assert_eq!(v1.dot(&v2), 0);
+
     let v3 = Vector::new([1.0, 1.0]);
     let v4 = Vector::new([1.0, 1.0]);
     assert_eq!(v3.dot(&v4), 2.0);
